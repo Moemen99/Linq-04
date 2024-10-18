@@ -236,3 +236,103 @@ Demo01.Data.Order[]
 3. `SelectMany` is particularly useful when dealing with one-to-many relationships in your data model.
 
 Understanding the difference between these operators allows you to effectively manipulate and query complex data structures in LINQ.
+
+
+
+# Advanced LINQ Select Operations
+
+## 1. Selecting Multiple Properties
+
+When you need to select more than one property, you can create an anonymous type.
+
+### Fluent Syntax
+```csharp
+var Result = ProductList.Select(P => new {
+    ProductID = P.ProductID,
+    ProductName = P.ProductName
+});
+```
+
+### Query Syntax
+```csharp
+var Result = from P in ProductList
+             select new { 
+                 ProductID = P.ProductID, 
+                 ProductName = P.ProductName 
+             };
+```
+
+### Output Example
+```
+{ ProductID = 52, ProductName = Filo Mix }
+{ ProductID = 53, ProductName = Perth Pasties }
+{ ProductID = 54, ProductName = Tourtière }
+...
+```
+
+## 2. Complex Queries: Filtering and Transforming
+
+You can combine Where and Select to filter and transform data in one query.
+
+### Fluent Syntax
+```csharp
+var DiscountedProductList = ProductList
+    .Where(P => P.UnitInStock > 0)
+    .Select(P => new {
+        Id = P.ProductID,
+        Name = P.ProductName,
+        OldPrice = P.UnitPrice,
+        NewPrice = P.UnitPrice - (P.UnitPrice * 0.1M)
+    });
+```
+
+### Query Syntax
+```csharp
+var DiscountedProductList = from P in ProductList
+                            where P.UnitInStock > 0
+                            select new {
+                                Id = P.ProductID,
+                                Name = P.ProductName,
+                                OldPrice = P.UnitPrice,
+                                NewPrice = P.UnitPrice - (P.UnitPrice * 0.1M)
+                            };
+```
+
+### Output Example
+```
+{ Id = 51, Name = Manjimup Dried Apples, OldPrice = 53.0000, NewPrice = 47.70000 }
+{ Id = 52, Name = Filo Mix, OldPrice = 7.0000, NewPrice = 6.30000 }
+{ Id = 54, Name = Tourtière, OldPrice = 7.4500, NewPrice = 6.70500 }
+...
+```
+
+## 3. Indexed Select
+
+The Select method has an overload that provides the index of each item.
+
+### Fluent Syntax (Only)
+```csharp
+var Result = ProductList
+    .Where(P => P.UnitInStock > 0)
+    .Select((P, I) => new { 
+        Index = I, 
+        ProductName = P.ProductName 
+    });
+```
+
+### Output Example
+```
+{ Index = 46, ProductName = Manjimup Dried Apples }
+{ Index = 47, ProductName = Filo Mix }
+{ Index = 48, ProductName = Tourtière }
+...
+```
+
+## Key Points
+
+1. Use anonymous types to select multiple properties.
+2. You can chain Where and Select for complex queries.
+3. The indexed Select is only available in fluent syntax.
+4. Anonymous types allow you to create temporary data structures without defining a formal class.
+
+These advanced Select operations allow for powerful data transformations and projections in LINQ queries.
