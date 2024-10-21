@@ -336,3 +336,99 @@ var Result = ProductList
 4. Anonymous types allow you to create temporary data structures without defining a formal class.
 
 These advanced Select operations allow for powerful data transformations and projections in LINQ queries.
+
+
+# LINQ Ordering Operators
+
+LINQ provides several operators for ordering sequences. These operators allow you to sort data based on one or more properties in ascending or descending order.
+
+## Basic Ordering Operators
+
+### OrderBy
+The `OrderBy` operator sorts elements in ascending order.
+
+#### Fluent Syntax
+```csharp
+var result = ProductList.OrderBy(p => p.UnitPrice);
+```
+
+#### Query Syntax
+```csharp
+var result = from p in ProductList
+             orderby p.UnitPrice
+             select p;
+```
+
+### OrderByDescending
+The `OrderByDescending` operator sorts elements in descending order.
+
+#### Fluent Syntax
+```csharp
+var result = ProductList.OrderByDescending(p => p.UnitPrice);
+```
+
+#### Query Syntax
+```csharp
+var result = from p in ProductList
+             orderby p.UnitPrice descending
+             select p;
+```
+
+## Multiple Property Ordering
+
+You can order by multiple properties using the `ThenBy` and `ThenByDescending` operators.
+
+### Fluent Syntax
+```csharp
+var result = ProductList.OrderByDescending(p => p.UnitPrice)
+                        .ThenBy(p => p.UnitsInStock);
+
+var result2 = ProductList.OrderByDescending(p => p.UnitPrice)
+                         .ThenByDescending(p => p.UnitsInStock);
+```
+
+### Query Syntax
+```csharp
+var result = from p in ProductList
+             orderby p.UnitPrice descending, p.UnitsInStock descending
+             select p;
+```
+
+## Additional Operators
+
+### Where
+The `Where` operator is used for filtering elements based on a condition.
+
+```csharp
+var result = ProductList.Where(p => p.UnitsInStock == 0);
+```
+
+### Reverse
+The `Reverse` operator reverses the order of elements in a sequence.
+
+```csharp
+var result = ProductList.Where(p => p.UnitsInStock == 0).Reverse();
+```
+
+## Comparison Table: Fluent Syntax vs Query Syntax
+
+| Operation | Fluent Syntax | Query Syntax |
+|-----------|---------------|--------------|
+| Ascending Order | `OrderBy(p => p.Property)` | `orderby p.Property` |
+| Descending Order | `OrderByDescending(p => p.Property)` | `orderby p.Property descending` |
+| Multiple Properties | `OrderBy().ThenBy()` | `orderby Property1, Property2` |
+
+## Execution Behavior
+
+```mermaid
+graph TD
+    A[LINQ Query] --> B{Deferred Execution}
+    B -->|Yes| C[Filtration]
+    B -->|Yes| D[Transformation]
+    B -->|Yes| E[Ordering]
+    C --> F[Results]
+    D --> F
+    E --> F
+```
+
+All these operators (filtration, transformation, ordering) use deferred execution. This means the query is not executed immediately when it's defined, but rather when the results are actually needed (e.g., when iterating over the results or calling a method like `ToList()`).
